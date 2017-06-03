@@ -1,5 +1,32 @@
 local indiceJogada = 1;
 local jogadasFeitas = {};
+local function verificaFim ()
+    if (jogadasFeitas[1] and jogadasFeitas[1] == jogadasFeitas[2]
+            and jogadasFeitas[2] == jogadasFeitas[3]) then
+        return jogadasFeitas[1];
+    elseif (jogadasFeitas[4] and jogadasFeitas[4] == jogadasFeitas[5]
+            and jogadasFeitas[5] == jogadasFeitas[6]) then
+        return jogadasFeitas[4];
+    elseif (jogadasFeitas[7] and jogadasFeitas[7] == jogadasFeitas[8]
+            and jogadasFeitas[8] == jogadasFeitas[9]) then
+        return jogadasFeitas[7];
+    elseif (jogadasFeitas[1] and jogadasFeitas[1] == jogadasFeitas[4]
+            and jogadasFeitas[4] == jogadasFeitas[7]) then
+        return jogadasFeitas[1];
+    elseif (jogadasFeitas[2] and jogadasFeitas[2] == jogadasFeitas[5]
+            and jogadasFeitas[5] == jogadasFeitas[8]) then
+        return jogadasFeitas[2];
+    elseif (jogadasFeitas[3] and jogadasFeitas[3] == jogadasFeitas[6]
+            and jogadasFeitas[6] == jogadasFeitas[9]) then
+        return jogadasFeitas[3];
+    elseif (jogadasFeitas[1] and jogadasFeitas[1] == jogadasFeitas[5]
+            and jogadasFeitas[5] == jogadasFeitas[9]) then
+        return jogadasFeitas[1];
+    elseif (jogadasFeitas[3] and jogadasFeitas[3] == jogadasFeitas[5]
+            and jogadasFeitas[5] == jogadasFeitas[7]) then
+        return jogadasFeitas[3];
+    end
+end
 
 local function fazJogada (self, event)
     if (not jogadasFeitas[self.id] and indiceJogada % 2 == 1) then
@@ -10,6 +37,14 @@ local function fazJogada (self, event)
         jogadasFeitas[self.id] = "O";
         indiceJogada = indiceJogada + 1;
         display.newImageRect(self, "O.png", 102, 102);
+    end
+    local resultadoRodada = verificaFim();
+    if (resultadoRodada == "X") then
+        native.showAlert("Parabéns, você ganhou", "X", {'OK'});
+    elseif (resultadoRodada == "O") then
+        native.showAlert("Parabéns, você ganhou", "O", {'OK'});
+    elseif (indiceJogada == 10) then
+        native.showAlert("Deu véia", "AFF", {'OK'});
     end
 end
 
