@@ -1,5 +1,8 @@
 local indiceJogada = 1;
-local jogadasFeitas = {};
+local jogadasFeitas = {{}, {}, {}, {}, {}, {}, {}, {}, {}};
+local TAMANHO_CAIXA = 102;
+local TAMANHO_X_O = TAMANHO_CAIXA / 3;
+
 local function verificaFim ()
     if (jogadasFeitas[1] and jogadasFeitas[1] == jogadasFeitas[2]
             and jogadasFeitas[2] == jogadasFeitas[3]) then
@@ -28,9 +31,23 @@ local function verificaFim ()
     end
 end
 
+local ceil, floor = math.ceil, math.floor
+
 local function fazJogada (self, event)
-    if (not jogadasFeitas[self.id] and indiceJogada % 2 == 1) then
-        jogadasFeitas[self.id] = "X";
+	local caixa = jogadasFeitas[self.id];
+	local jogada = ceil(indiceJogada / 2);
+	-- Se é primeira ou segunda jogada
+    if (indiceJogada % 2 == 1) then
+		caixa[jogada] = true;
+		-- o `-1` serve pra transformar [0, 2] em [-1, 1]
+		local x, y = (jogada - 1) % 3 - 1, floor((jogada - 1) / 3) - 1
+		print(indiceJogada, x, y, jogada)
+		display.newText{parent=self, text=jogada, x=x * TAMANHO_X_O, y=y * TAMANHO_X_O}
+		indiceJogada = indiceJogada + 1;
+	else
+		indiceJogada = indiceJogada + 1;
+	end
+--[[        jogadasFeitas[self.id] = "X";
         indiceJogada = indiceJogada + 1;
         display.newImageRect(self, "X.png", 102, 102);
     elseif (not jogadasFeitas[self.id] and indiceJogada % 2 == 0) then
@@ -46,22 +63,21 @@ local function fazJogada (self, event)
     elseif (indiceJogada == 10) then
         native.showAlert("Deu véia", "AFF", {'OK'});
     end
+--]]
 end
 
 
-local caixa = {};
 local Tabuleiro = display.newGroup();
 Tabuleiro.x = display.contentCenterX;
 Tabuleiro.y = display.contentCenterY;
 
 for i = 1, 3 do
-    caixa[i] = {};
     for j = 1, 3 do
         local nova_caixa = display.newGroup();
         Tabuleiro:insert(nova_caixa);
-        display.newImageRect(nova_caixa, "caixa.png", 102, 102);
-        nova_caixa.x = ((j - 2) * 102);
-        nova_caixa.y = ((i - 2) * 102);
+        display.newImageRect(nova_caixa, "caixa.png", TAMANHO_CAIXA, TAMANHO_CAIXA);
+        nova_caixa.x = ((j - 2) * TAMANHO_CAIXA);
+        nova_caixa.y = ((i - 2) * TAMANHO_CAIXA);
         nova_caixa.id = (3 * (i - 1)) + j;
         nova_caixa.tap = fazJogada;
         nova_caixa:addEventListener("tap", nova_caixa);
